@@ -1,4 +1,3 @@
-<?php echo "This is db.php"; ?>
 
 <?php
 $host = 'localhost';
