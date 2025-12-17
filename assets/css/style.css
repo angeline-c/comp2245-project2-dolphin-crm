@@ -19,3 +19,406 @@ body {
     padding: 20px;
     flex: 1;
 }
+
+/* DASHBOARD.PHP CSS!!!! */
+.page {
+  padding: 24px;
+}
+
+.page-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.page-title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #e7e9ee;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: #4f46e5;
+  color: #fff;
+}
+
+.btn-primary:hover {
+  filter: brightness(0.95);
+}
+
+.filters {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #eef0f4;
+  margin-bottom: 12px;
+}
+
+.filters-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  color: #111827;
+  white-space: nowrap;
+}
+
+.filter-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  font-size: 14px;
+}
+
+.filters-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.tab {
+  text-decoration: none;
+  color: #6b7280;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 8px 4px;
+  border-bottom: 2px solid transparent;
+}
+
+.tab:hover {
+  color: #111827;
+}
+
+.tab.is-active {
+  color: #4f46e5;
+  border-bottom-color: #4f46e5;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table thead th {
+  text-align: left;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  color: #6b7280;
+  padding: 12px 10px;
+  background: #f9fafb;
+  border-bottom: 1px solid #eef0f4;
+}
+
+.data-table tbody td {
+  padding: 12px 10px;
+  border-bottom: 1px solid #f0f2f6;
+  font-size: 14px;
+  color: #111827;
+}
+
+.name-cell {
+  font-weight: 700;
+}
+
+.col-view,
+.view-cell {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.view-link {
+  color: #4f46e5;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.view-link:hover {
+  text-decoration: underline;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  border: 1px solid transparent;
+}
+
+.badge-sales {
+  background: #fff7ed;
+  border-color: #fed7aa;
+  color: #9a3412;
+}
+
+.badge-support {
+  background: #eef2ff;
+  border-color: #c7d2fe;
+  color: #3730a3;
+}
+
+.empty-state {
+  text-align: center;
+  color: #6b7280;
+  padding: 18px 10px;
+}
+
+/*NEW_CONTAACT.PHP CSS!!!!*/
+.form { margin-top: 6px; }
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.form-group label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #374151;
+}
+
+.form-group input,
+.form-group select {
+  height: 38px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  outline: none;
+  font-size: 14px;
+  background: #fff;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #4f46e5;
+}
+
+.form-row { max-width: 360px; }
+
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+@media (max-width: 720px) {
+  .form-grid-2 { grid-template-columns: 1fr; }
+  .form-row { max-width: 100%; }
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 8px;
+  border-top: 1px solid #eef0f4;
+  margin-top: 8px;
+}
+
+.alert {
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  border: 1px solid transparent;
+}
+
+.alert ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.alert-success {
+  background: #ecfdf5;
+  border-color: #a7f3d0;
+  color: #065f46;
+}
+
+.alert-error {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #991b1b;
+}
+
+/* CONTACT_VIEW.php CSS!!! */
+.contact-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.contact-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  background: #e5e7eb;
+}
+
+.subtext {
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+.contact-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn-success {
+  background: #22c55e;
+  color: #0b1f12;
+  border-color: transparent;
+}
+
+.btn-warn {
+  background: #f59e0b;
+  color: #1f1300;
+  border-color: transparent;
+}
+
+.btn-success:hover,
+.btn-warn:hover {
+  filter: brightness(0.95);
+}
+
+.contact-info { margin-bottom: 14px; }
+
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.info-label {
+  font-size: 12px;
+  font-weight: 800;
+  color: #6b7280;
+  margin-bottom: 6px;
+}
+
+.info-value {
+  font-size: 14px;
+  color: #111827;
+}
+
+@media (max-width: 720px) {
+  .contact-head { flex-direction: column; }
+  .info-grid { grid-template-columns: 1fr; }
+}
+
+/* Notes */
+.notes-card { margin-top: 14px; }
+
+.notes-title {
+  margin: 0 0 10px 0;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.notes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.note {
+  border-top: 1px solid #eef0f4;
+  padding-top: 12px;
+}
+
+.note:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+
+.note-author {
+  font-weight: 800;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+.note-body {
+  font-size: 13px;
+  color: #374151;
+  line-height: 1.5;
+}
+
+.note-date {
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 6px;
+}
+
+/* Note form */
+.note-form {
+  margin-top: 16px;
+  border-top: 1px solid #eef0f4;
+  padding-top: 12px;
+}
+
+.note-form-title {
+  font-weight: 800;
+  font-size: 13px;
+  margin-bottom: 8px;
+  color: #111827;
+}
+
+.note-form textarea {
+  width: 100%;
+  resize: vertical;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  outline: none;
+  font-size: 14px;
+}
+
+.note-form textarea:focus {
+  border-color: #4f46e5;
+}

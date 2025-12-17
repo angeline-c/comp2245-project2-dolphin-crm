@@ -1,3 +1,9 @@
+CREATE DATABASE IF NOT EXISTS dolphin_crm
+  CHARACTER SET utf8mb4
+  COLLATE utf8mb4_unicode_ci;
+
+USE dolphin_crm;
+
 CREATE TABLE users (
   id INT AUTO_INCREMENT PRIMARY KEY,
   firstname VARCHAR(255) NOT NULL,
@@ -6,7 +12,7 @@ CREATE TABLE users (
   password VARCHAR(255) NOT NULL,
   role VARCHAR(50) NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+) ENGINE=InnoDB;
 
 CREATE TABLE contacts (
   id INT AUTO_INCREMENT PRIMARY KEY,
@@ -20,10 +26,10 @@ CREATE TABLE contacts (
   assigned_to INT,
   created_by INT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP NULL,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (assigned_to) REFERENCES users(id),
   FOREIGN KEY (created_by) REFERENCES users(id)
-);
+) ENGINE=InnoDB;
 
 CREATE TABLE notes (
   id INT AUTO_INCREMENT PRIMARY KEY,
@@ -33,7 +39,10 @@ CREATE TABLE notes (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (contact_id) REFERENCES contacts(id),
   FOREIGN KEY (created_by) REFERENCES users(id)
-);
+) ENGINE=InnoDB;
 
 INSERT INTO users (firstname, lastname, email, password, role)
-VALUES ('Admin', 'User', 'admin@project2.com', '$2y$10$PkXnLg3PEFTFJm/6tZsXmeCnyw5LCuFKlZmPD3TvpZiysdAKJp6S2', 'admin');
+VALUES
+  ('Admin', 'User', 'admin@project2.com',
+   '$2y$10$PkXnLg3PEFTFJm/6tZsXmeCnyw5LCuFKlZmPD3TvpZiysdAKJp6S2',
+   'admin');
