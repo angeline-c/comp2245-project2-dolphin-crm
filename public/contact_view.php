@@ -67,17 +67,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
           $success = "Contact type updated.";
         }
       }
-
-      if ($action === "add_note") {
-        $comment = trim((string)($_POST["comment"] ?? ""));
-        if ($comment === "") {
-          $errors[] = "Note cannot be empty.";
-        } else {
-          $nstmt = $conn->prepare("INSERT INTO notes (contact_id, comment, created_by) VALUES (?, ?, ?)");
-          $nstmt->execute([$contactId, $comment, (int)$currentUserId]);
-          $success = "Note added.";
-        }
-      }
     } catch (PDOException $e) {
       $errors[] = "Something went wrong. Please try again.";
     }
@@ -205,9 +194,9 @@ if ($contact) {
       </div>
 
       <?php if (empty($notes)): ?>
-        <p class="empty-state">No notes yet.</p>
+        <p class="empty-state" id="noNotesMsg">No notes yet.</p>
       <?php else: ?>
-        <div class="notes-list">
+        <div class="notes-list" id="notesList">
           <?php foreach ($notes as $n): ?>
             <div class="note">
               <div class="note-author"><?php echo h($n["author"]); ?></div>
@@ -220,18 +209,33 @@ if ($contact) {
 
       <div class="note-form">
         <div class="note-form-title">Add a note</div>
-        <form method="POST">
-          <input type="hidden" name="csrf_token" value="<?php echo h($_SESSION["csrf_token"]); ?>">
-          <input type="hidden" name="action" value="add_note">
-          <textarea name="comment" rows="4" placeholder="Enter details here..." required></textarea>
+        <div class="note-form">
 
-          <div class="form-actions">
-            <button class="btn btn-primary" type="submit">Add Note</button>
-          </div>
-        </form>
+  <input type="hidden" id="csrfToken" value="<?php echo h($_SESSION["csrf_token"]); ?>">
+
+  <textarea
+    id="noteText"
+    rows="4"
+    placeholder="Enter details here..."
+  ></textarea>
+
+  <div class="form-actions">
+    <button
+      class="btn btn-primary"
+      id="addNoteBtn"
+      data-contact-id="<?php echo h($contactId); ?>"
+    >
+      Add Note
+    </button>
+  </div>
+
+  <p id="noteError" class="form-error" style="display:none;"></p>
+</div>
+
       </div>
     </section>
   <?php endif; ?>
 </main>
+<script src="../assets/js/notes.js"></script>
 
 <?php include "../includes/footer.php"; ?>
