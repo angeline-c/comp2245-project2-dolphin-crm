@@ -548,3 +548,157 @@ body {
   font-size: 12px;
   margin-top: 16px;
 }
+
+/* ===== Users page header ===== */
+.users-header{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:16px;
+  margin-bottom:16px;
+}
+
+.users-title{
+  margin:0;
+  font-size:24px;
+  font-weight:700;
+}
+
+.users-subtitle{
+  margin:6px 0 0 0;
+  color:#6b7280;
+  font-size:14px;
+}
+
+/*SERS.php */
+.users-card{
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:8px;
+  padding:14px;
+}
+
+.table-wrap{
+  width:100%;
+  overflow-x:auto;
+}
+
+.users-table{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0;
+  min-width:720px;
+  font-size:14px;
+}
+
+.users-table thead th{
+  text-align:left;
+  padding:12px 14px;
+  background:#f3f4f6;     
+  color:#111827;
+  font-weight:700;
+  border-bottom:1px solid #e5e7eb;
+  position:sticky;
+  top:0;                
+  z-index:1;
+}
+
+.users-table tbody td{
+  padding:12px 14px;
+  border-bottom:1px solid #eef2f7;
+  vertical-align:middle;
+  color:#111827;
+}
+
+.users-table tbody tr:nth-child(odd){
+  background:#ffffff;
+}
+.users-table tbody tr:nth-child(even){
+  background:#f9fafb;
+}
+
+.users-table tbody tr:hover{
+  background:#eef2ff;
+}
+
+.users-table thead th:first-child{ border-top-left-radius:6px; }
+.users-table thead th:last-child{ border-top-right-radius:6px; }
+
+.name-cell{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.avatar-circle{
+  width:36px;
+  height:36px;
+  border-radius:999px;
+  background:#e5e7eb;
+  color:#111827;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:700;
+  font-size:13px;
+  flex:0 0 auto;
+}
+
+.name-stack .name{
+  font-weight:700;
+  line-height:1.2;
+}
+.muted{
+  color:#6b7280;
+  font-size:12px;
+}
+
+.users-table td.email{
+  color:#111827;
+  max-width:320px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.chip{
+  display:inline-block;
+  padding:4px 10px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:700;
+  border:1px solid transparent;
+}
+
+.chip-admin{
+  background:#ecfdf5;
+  color:#065f46;
+  border-color:#10b98133;
+}
+
+.chip-member{
+  background:#eff6ff;
+  color:#1e40af;
+  border-color:#3b82f633;
+}
+
+.btn-pill{ border-radius:999px; }
+.btn-icon{ font-weight:900; margin-right:6px; }
+
+.empty-state{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:16px;
+  border:1px dashed #e5e7eb;
+  border-radius:8px;
+  background:#fafafa;
+}
+.empty-emoji{ font-size:24px; }
+.empty-title{ font-weight:700; }
+.empty-text{ color:#6b7280; font-size:13px; margin-top:2px; }
+
+@media (max-width:768px){
+  .users-header{ flex-direction:column; align-items:stretch; }
+  .users-table{ min-width:640px; }
+}

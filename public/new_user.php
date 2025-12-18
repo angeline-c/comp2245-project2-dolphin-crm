@@ -1,75 +1,206 @@
 <?php
-require_once "../includes/auth.php";  // Ensures only logged-in users (admins) can access
-require_once "../includes/db.php";    // Database connection
+require_once "../includes/auth.php";
+require_once "../includes/db.php";
 
-$success = $error = "";
+if (session_status() === PHP_SESSION_NONE) {
+  session_start();
+}
 
-// Handle form submission
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $firstname = trim($_POST['firstname']);
-    $lastname  = trim($_POST['lastname']);
-    $email     = trim($_POST['email']);
-    $password  = password_hash($_POST['password'], PASSWORD_DEFAULT); // Hash the password
-    $role      = $_POST['role'];
+function h($value) {
+  return htmlspecialchars((string)$value, ENT_QUOTES, "UTF-8");
+}
 
-    // Check if email already exists
-    $stmt = $conn->prepare("SELECT COUNT(*) FROM users WHERE email = :email");
-    $stmt->execute([':email' => $email]);
-    if ($stmt->fetchColumn() > 0) {
-        $error = "Email already exists. Please use a different email.";
-    } else {
-        // Insert new user
-        try {
-            $stmt = $conn->prepare("INSERT INTO users (firstname, lastname, email, password, role) 
-                                    VALUES (:firstname, :lastname, :email, :password, :role)");
-            $stmt->execute([
-                ':firstname' => $firstname,
-                ':lastname'  => $lastname,
-                ':email'     => $email,
-                ':password'  => $password,
-                ':role'      => $role
-            ]);
-            $success = "User added successfully!";
-        } catch (PDOException $e) {
-            $error = "Error: " . $e->getMessage();
-        }
+function clean($value) {
+  return trim((string)$value);
+}
+
+/**
+ * Password rules:
+ * - at least 8 characters
+ * - at least 1 uppercase
+ * - at least 1 lowercase
+ * - at least 1 number
+ */
+function isStrongPassword($password) {
+  return preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/', $password) === 1;
+}
+
+$errors = [];
+$success = "";
+
+// CSRF
+if (!isset($_SESSION["csrf_token"])) {
+  $_SESSION["csrf_token"] = bin2hex(random_bytes(32));
+}
+
+// ✅ Optional: enforce admin-only (depends on how your auth.php stores role)
+// If your session has role, uncomment and adjust key name.
+// $role = $_SESSION["role"] ?? "";
+// if ($role !== "Admin") { header("Location: dashboard.php"); exit; }
+
+$form = [
+  "firstname" => "",
+  "lastname"  => "",
+  "email"     => "",
+  "role"      => "Member"
+];
+
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+
+  // CSRF check
+  $token = $_POST["csrf_token"] ?? "";
+  if (!hash_equals($_SESSION["csrf_token"], $token)) {
+    $errors[] = "Invalid session token. Please refresh and try again.";
+  }
+
+  $form["firstname"] = clean($_POST["firstname"] ?? "");
+  $form["lastname"]  = clean($_POST["lastname"] ?? "");
+  $form["email"]     = clean($_POST["email"] ?? "");
+  $passwordRaw       = (string)($_POST["password"] ?? "");
+  $form["role"]      = clean($_POST["role"] ?? "Member");
+
+  // Validate role strictly
+  $allowedRoles = ["Admin", "Member"];
+  if (!in_array($form["role"], $allowedRoles, true)) {
+    $errors[] = "Invalid role selected.";
+  }
+
+  // Validate first/last names (letters, spaces, hyphens, apostrophes)
+  if ($form["firstname"] === "") {
+    $errors[] = "First name is required.";
+  } elseif (!preg_match("/^[A-Za-z]+(?:[ '-][A-Za-z]+)*$/", $form["firstname"])) {
+    $errors[] = "First name contains invalid characters.";
+  } elseif (strlen($form["firstname"]) > 50) {
+    $errors[] = "First name must be 50 characters or less.";
+  }
+
+  if ($form["lastname"] === "") {
+    $errors[] = "Last name is required.";
+  } elseif (!preg_match("/^[A-Za-z]+(?:[ '-][A-Za-z]+)*$/", $form["lastname"])) {
+    $errors[] = "Last name contains invalid characters.";
+  } elseif (strlen($form["lastname"]) > 50) {
+    $errors[] = "Last name must be 50 characters or less.";
+  }
+
+  // Validate email
+  if ($form["email"] === "") {
+    $errors[] = "Email is required.";
+  } elseif (!filter_var($form["email"], FILTER_VALIDATE_EMAIL)) {
+    $errors[] = "Please enter a valid email address.";
+  } elseif (strlen($form["email"]) > 100) {
+    $errors[] = "Email must be 100 characters or less.";
+  }
+
+  // Validate password strength
+  if ($passwordRaw === "") {
+    $errors[] = "Password is required.";
+  } elseif (!isStrongPassword($passwordRaw)) {
+    $errors[] = "Password must be at least 8 characters and include one uppercase letter, one lowercase letter, and one number.";
+  }
+
+  // Check duplicate email
+  if (empty($errors)) {
+    $check = $conn->prepare("SELECT id FROM users WHERE email = ? LIMIT 1");
+    $check->execute([$form["email"]]);
+    if ($check->fetch(PDO::FETCH_ASSOC)) {
+      $errors[] = "Email already exists. Please use a different email.";
     }
+  }
+
+  // Insert
+  if (empty($errors)) {
+    try {
+      $hashed = password_hash($passwordRaw, PASSWORD_DEFAULT);
+
+      $ins = $conn->prepare(
+        "INSERT INTO users (firstname, lastname, email, password, role)
+         VALUES (?, ?, ?, ?, ?)"
+      );
+      $ins->execute([
+        $form["firstname"],
+        $form["lastname"],
+        $form["email"],
+        $hashed,
+        $form["role"]
+      ]);
+
+      $success = "User added successfully.";
+      // reset form
+      $form = ["firstname" => "", "lastname" => "", "email" => "", "role" => "Member"];
+
+    } catch (PDOException $e) {
+      $errors[] = "Failed to add user. Please try again.";
+    }
+  }
 }
 ?>
 
 <?php include "../includes/header.php"; ?>
 <?php include "../includes/sidebar.php"; ?>
 
-<h1>Add New User</h1>
+<main class="page">
+  <div class="page-head">
+    <h1 class="page-title">New User</h1>
+  </div>
 
-<?php if ($success): ?>
-    <p style="color:green;"><?php echo $success; ?></p>
-<?php endif; ?>
+  <?php if (!empty($success)): ?>
+    <div class="alert alert-success"><?php echo h($success); ?></div>
+  <?php endif; ?>
 
-<?php if ($error): ?>
-    <p style="color:red;"><?php echo $error; ?></p>
-<?php endif; ?>
+  <?php if (!empty($errors)): ?>
+    <div class="alert alert-error">
+      <ul>
+        <?php foreach ($errors as $err): ?>
+          <li><?php echo h($err); ?></li>
+        <?php endforeach; ?>
+      </ul>
+    </div>
+  <?php endif; ?>
 
-<form method="POST">
-    <label>First Name:</label><br>
-    <input type="text" name="firstname" required><br>
+  <section class="card form-card">
+    <form method="POST" class="form">
+      <input type="hidden" name="csrf_token" value="<?php echo h($_SESSION["csrf_token"]); ?>">
 
-    <label>Last Name:</label><br>
-    <input type="text" name="lastname" required><br>
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label for="firstname">First Name</label>
+          <input id="firstname" name="firstname" type="text" value="<?php echo h($form["firstname"]); ?>" required>
+        </div>
 
-    <label>Email:</label><br>
-    <input type="email" name="email" required><br>
+        <div class="form-group">
+          <label for="lastname">Last Name</label>
+          <input id="lastname" name="lastname" type="text" value="<?php echo h($form["lastname"]); ?>" required>
+        </div>
+      </div>
 
-    <label>Password:</label><br>
-    <input type="password" name="password" required><br>
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" value="<?php echo h($form["email"]); ?>" required>
+        </div>
 
-    <label>Role:</label><br>
-    <select name="role" required>
-        <option value="Admin">Admin</option>
-        <option value="User">User</option>
-    </select><br><br>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" required>
+          <small class="help-text">Must be 8+ chars with 1 uppercase, 1 lowercase, and 1 number.</small>
+        </div>
+      </div>
 
-    <button type="submit">Add User</button>
-</form>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="role">Role</label>
+          <select id="role" name="role" required>
+            <option value="Member" <?php echo $form["role"] === "Member" ? "selected" : ""; ?>>Member</option>
+            <option value="Admin" <?php echo $form["role"] === "Admin" ? "selected" : ""; ?>>Admin</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Save</button>
+      </div>
+    </form>
+  </section>
+</main>
 
 <?php include "../includes/footer.php"; ?>

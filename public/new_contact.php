@@ -16,6 +16,14 @@ function clean($value) {
   return trim((string)$value);
 }
 
+function isValidName($name) {
+  return preg_match("/^[A-Za-z]+(?:[ '-][A-Za-z]+)*$/", $name);
+}
+
+function isValidCompany($company) {
+  return preg_match("/^[A-Za-z0-9]+(?:[A-Za-z0-9 .,&'-]*[A-Za-z0-9])?$/", $company);
+}
+
 $errors = [];
 $success = "";
 
@@ -57,10 +65,38 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
   $form["type"]        = clean($_POST["type"] ?? "");
   $form["assigned_to"] = clean($_POST["assigned_to"] ?? "");
 
-  if ($form["firstname"] === "") $errors[] = "First Name is required.";
-  if ($form["lastname"] === "")  $errors[] = "Last Name is required.";
-  if ($form["company"] === "")   $errors[] = "Company is required.";
   if ($form["assigned_to"] === "") $errors[] = "Assigned To is required.";
+  if ($form["firstname"] === "") {
+    $errors[] = "First Name is required.";
+  } elseif (!isValidName($form["firstname"])) {
+    $errors[] = "First Name contains invalid characters.";
+  }
+
+  if ($form["lastname"] === "") {
+    $errors[] = "Last Name is required.";
+  } elseif (!isValidName($form["lastname"])) {
+    $errors[] = "Last Name contains invalid characters.";
+  }
+
+  if ($form["company"] === "") {
+    $errors[] = "Company is required.";
+  } elseif (!isValidCompany($form["company"])) {
+    $errors[] = "Company name contains invalid characters.";
+  }
+
+  if (strlen($form["firstname"]) > 50) {
+    $errors[] = "First Name must be 50 characters or less.";
+  }
+
+  if (strlen($form["lastname"]) > 50) {
+    $errors[] = "Last Name must be 50 characters or less.";
+  }
+
+  if (strlen($form["company"]) > 100) {
+    $errors[] = "Company name must be 100 characters or less.";
+  }
+
+
 
   $allowedTitles = ["Mr", "Mrs", "Ms", "Dr", "Prof", ""];
   if (!in_array($form["title"], $allowedTitles, true)) {
@@ -85,6 +121,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       $errors[] = "Assigned To user does not exist.";
     }
   }
+
+  if ($form["email"] !== "") {
+    $dup = $conn->prepare("SELECT id FROM contacts WHERE email = ? LIMIT 1");
+    $dup->execute([$form["email"]]);
+    if ($dup->fetch(PDO::FETCH_ASSOC)) {
+      $errors[] = "A contact with this email already exists.";
+    }
+  }
+
 
   if (!$currentUserId) {
     $errors[] = "You must be logged in to create a contact.";

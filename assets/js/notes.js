@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     const json = await res.json();
-    console.log("AJAX RESPONSE:", json);
+
     if (!json.success) {
       errorBox.textContent = json.message;
       errorBox.style.display = "block";
