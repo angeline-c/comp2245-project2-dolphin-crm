@@ -14,13 +14,7 @@ function clean($value) {
   return trim((string)$value);
 }
 
-/**
- * Password rules:
- * - at least 8 characters
- * - at least 1 uppercase
- * - at least 1 lowercase
- * - at least 1 number
- */
+
 function isStrongPassword($password) {
   return preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/', $password) === 1;
 }
@@ -28,15 +22,10 @@ function isStrongPassword($password) {
 $errors = [];
 $success = "";
 
-// CSRF
 if (!isset($_SESSION["csrf_token"])) {
   $_SESSION["csrf_token"] = bin2hex(random_bytes(32));
 }
 
-// ✅ Optional: enforce admin-only (depends on how your auth.php stores role)
-// If your session has role, uncomment and adjust key name.
-// $role = $_SESSION["role"] ?? "";
-// if ($role !== "Admin") { header("Location: dashboard.php"); exit; }
 
 $form = [
   "firstname" => "",
@@ -47,7 +36,6 @@ $form = [
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
-  // CSRF check
   $token = $_POST["csrf_token"] ?? "";
   if (!hash_equals($_SESSION["csrf_token"], $token)) {
     $errors[] = "Invalid session token. Please refresh and try again.";
@@ -59,13 +47,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
   $passwordRaw       = (string)($_POST["password"] ?? "");
   $form["role"]      = clean($_POST["role"] ?? "Member");
 
-  // Validate role strictly
+  //VALIDATION
   $allowedRoles = ["Admin", "Member"];
   if (!in_array($form["role"], $allowedRoles, true)) {
     $errors[] = "Invalid role selected.";
   }
 
-  // Validate first/last names (letters, spaces, hyphens, apostrophes)
   if ($form["firstname"] === "") {
     $errors[] = "First name is required.";
   } elseif (!preg_match("/^[A-Za-z]+(?:[ '-][A-Za-z]+)*$/", $form["firstname"])) {
@@ -82,7 +69,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $errors[] = "Last name must be 50 characters or less.";
   }
 
-  // Validate email
   if ($form["email"] === "") {
     $errors[] = "Email is required.";
   } elseif (!filter_var($form["email"], FILTER_VALIDATE_EMAIL)) {
@@ -91,14 +77,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $errors[] = "Email must be 100 characters or less.";
   }
 
-  // Validate password strength
   if ($passwordRaw === "") {
     $errors[] = "Password is required.";
   } elseif (!isStrongPassword($passwordRaw)) {
     $errors[] = "Password must be at least 8 characters and include one uppercase letter, one lowercase letter, and one number.";
   }
 
-  // Check duplicate email
   if (empty($errors)) {
     $check = $conn->prepare("SELECT id FROM users WHERE email = ? LIMIT 1");
     $check->execute([$form["email"]]);
@@ -107,7 +91,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
   }
 
-  // Insert
   if (empty($errors)) {
     try {
       $hashed = password_hash($passwordRaw, PASSWORD_DEFAULT);
@@ -125,7 +108,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       ]);
 
       $success = "User added successfully.";
-      // reset form
       $form = ["firstname" => "", "lastname" => "", "email" => "", "role" => "Member"];
 
     } catch (PDOException $e) {
