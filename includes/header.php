@@ -1,14 +1,17 @@
-<?php
-// header.php
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dolphin CRM</title>
-    <link rel="stylesheet" href="../assets/css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dolphin CRM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body>
+
+<header class="topbar">
+  <div class="topbar-left">
+    🐬 <span>Dolphin CRM</span>
+  </div>
+</header>
 
 <div class="layout">

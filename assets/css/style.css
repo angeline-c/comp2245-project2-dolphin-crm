@@ -1,23 +1,100 @@
+/*HEADER/FOOTER/SIDEBAR! */
+:root{
+  --topbar-h: 56px;
+  --sidebar-w: 220px;
+  --bg: #f3f4f6;
+  --topbar: #111827;
+  --border: #e5e7eb;
+  --muted: #6b7280;
+  --text: #111827;
+}
+
+html, body {
+  height: 100%;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: var(--bg);
+}
+
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--topbar-h);
+  background: var(--topbar);
+  display: flex;
+  align-items: center;
+  z-index: 1000;
+}
+
+.topbar-left {
+  width: var(--sidebar-w);
+  padding-left: 16px;
+  color: #fff;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .layout {
-    display: flex;
+  display: flex;
+  min-height: 100vh;
+  padding-top: var(--topbar-h);
 }
 
 .sidebar {
-    width: 200px;
-    padding: 20px;
-    background: #f2f2f2;
-    height: 100vh;
+  position: fixed;
+  top: var(--topbar-h);
+  left: 0;
+  bottom: 0;
+  width: var(--sidebar-w);
+  background: #fff;
+  border-right: 1px solid var(--border);
+  padding: 16px 14px;
 }
 
 .content {
-    padding: 20px;
-    flex: 1;
+  margin-left: var(--sidebar-w);
+  padding: 18px;
+  width: 100%;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar a {
+  display: block;
+  padding: 10px 12px;
+  margin-bottom: 6px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  color: #374151;
+}
+
+.sidebar a:hover {
+  background: #f3f4f6;
+}
+
+.sidebar a.is-active {
+  background: #eef2ff;
+  color: #3730a3;
+}
+
+.app-footer {
+  margin-top: 24px;
+  padding: 14px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--muted);
 }
 
 /* DASHBOARD.PHP CSS!!!! */
@@ -352,7 +429,6 @@ body {
   .info-grid { grid-template-columns: 1fr; }
 }
 
-/* Notes */
 .notes-card { margin-top: 14px; }
 
 .notes-title {
@@ -395,7 +471,6 @@ body {
   margin-top: 6px;
 }
 
-/* Note form */
 .note-form {
   margin-top: 16px;
   border-top: 1px solid #eef0f4;
@@ -421,4 +496,55 @@ body {
 
 .note-form textarea:focus {
   border-color: #4f46e5;
+}
+
+/* LOGIN.PHP!!!! */
+.login-body {
+  margin: 0;
+  background: #f3f4f6;
+}
+
+.login-topbar {
+  height: 56px;
+  background: #111827;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+}
+
+.login-brand {
+  color: #fff;
+  font-weight: 800;
+}
+
+.login-wrap {
+  max-width: 420px;
+  margin: 60px auto 0;
+  padding: 0 16px;
+}
+
+.login-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 18px;
+}
+
+.login-title {
+  text-align: center;
+  margin: 6px 0 14px;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.login-btn {
+  width: 100%;
+  margin-top: 6px;
+}
+
+.login-footer {
+  text-align: center;
+  color: #6b7280;
+  font-size: 12px;
+  margin-top: 16px;
 }
